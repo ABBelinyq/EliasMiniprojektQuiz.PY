@@ -1,50 +1,81 @@
 from playsound import playsound
 import random
+import requests 
+
+def syntaxcheck(svar):
+
+    if str(svar) not in ("1", "x", "X", "2"):
+        svar = str(input("Wrong input, Please choose '1', 'x', 'X' or '2'."))
+        syntaxcheck(svar)
+    
+def addquestions(NQ):
+    lenq = len(wow["Q"])
+    lens = lenq -1
+    if NQ > lenq:
+    
+        addquestion = NQ - lenq
+        url = "https://opentdb.com/api.php?amount=1&difficulty=medium&type=multiple"
+        getter = requests.get(url)
+        result = getter.json()
+        print
+        for addquestion in result['results']:
+            wow["Q"].append(addquestion["question"])
+            wow["AC"].append(addquestion["correct_answer"])
+            wow["FAQ1"].append(addquestion["incorrect_answers"][0])
+            wow["FAQ2"].append(addquestion["incorrect_answers"][1])
+        addquestions(NQ)
+            
+            
 
 
-wow = {"Q": ["Vad är Annika Anka?",
-             "Vilket klubblag har 'Zlatan' gjort flest A-lagsmål för?",
-             "Vilket djur går inte i dvala?",
-             "Vem tjänade mest år 2018 (enligt DN)",
-             "Vilket av dessa påstånden stämmer",
-             "Vilket fotbollslag kallas för 'Änglarna'",
-             "Vilken fransk stad är värdar för världens mest prestigefulla filmfestival?"],
+wow = {"Q": ["Who is Annika Anka?",
+             "Which football club has Zlatan Ibrahimovic scored most goals for",
+             "Which animal does NOT go into hibernation",
+             "Which swede earned the most money in 2018 (according to DN)",
+             "Which is correct?",
+             "Which football team is nicknamed 'Änglarna'",
+             "In which french city is the host for the biggest movie festival in the world?"],
 
-            "AC": ["En figur i Bamses äventyr",
+            "AC": ["A character in the adventures of Bamse",
                    "Paris Saint-Germain",
-                   "Ripa",
+                   "The Grouse",
                    "Sebastian Knutsson",
-                   "Svenskar äter mest godis per kapita.",
+                   "Swedes eat the most candy per capita.",
                    "IFK Göteborg",
                    "Cannes"], 
             
-            "FAQ1": ["Realityshowstjärna och exmaka till Paul Anka", 
+            "FAQ1": ["Realityshowstar and exwife of Paul Anka", 
                      "Ajax",
-                     "Fladdermusen",
+                     "The bat",
                      "Stefan Löfven",
-                     "Sverige har den lyckligaste befolkningen.",
+                     "Sweden has the happiest inhabitants.",
                      "GIF Sundsvall",
                      "Paris"],
 
-            "FAQ2": ["En maträtt",
+            "FAQ2": ["A dish",
                      "Malmö FF",
-                     "Huggormen",
+                     "The viper",
                      "Agneta Birgitta Englund",
-                     "Danskar är bäst i skandinavien på Engelska.",
+                     "Danes are best in scandinavia in english.",
                      "AFC Eskilstuna",
                      "Nice"]
 }
-NQ = int(input("Hur många frågor vill du ha? \n 3,6,9 eller 12? "))
+NQ = int(input("How many questions do you want? \n 3,6,9 eller 12? "))
+addquestions(NQ)
 QN = 1
+
+
+
 z=len(wow["Q"])
-qx = list(range(0, z))
 rättasvar = 0
 while QN <= NQ:
+    qx = list(range(0, z))
+    random.shuffle(qx)
+    v=qx[0]
     ett = []
     kryss = []
     två = []
-    v=qx[0]
-    random.shuffle(qx)
+    
     val =[0, 1, 2]
     random.shuffle(val)
     rätt = 0
@@ -82,17 +113,15 @@ while QN <= NQ:
     del qx[0]
 
 
-    print("Fråga " + str(QN)+ ": " + wow["Q"][v])
-    print("1. " +ett[0])
+    print("Question " + str(QN)+ ": " + wow["Q"][v])
+    print("1. " + ett[0])
     print("X. " + kryss[0])
     print("2. " + två[0])
-    svar = str(input("1, X eller 2? "))
+    svar = str(input("1, X or 2?"))
+    syntaxcheck(svar)
     del wow["Q"][v]
-    if str(svar) not in ("1", "x", "X", "2"):
-        svar = str(input("felaktig input, vänligen välj '1', 'x', 'X' eller '2'."))
-        if str
-    
-    elif str(svar) == str(rätt):
+            
+    if str(svar) == str(rätt):
         rättasvar+=1 
         playsound('correct_ping.mp3')  
         playsound('correct_voice.mp3')    
@@ -103,9 +132,11 @@ while QN <= NQ:
     else:
         playsound('wrong_ping.wav') 
         playsound('wrong_voice.mp3')
-
-      
     QN+=1
-print("Du fick " + str(rättasvar) + "/" + str(NQ) + " rätt" )
+    z-=1
+    
+    # print(v)
+    # print(z)
+print("You got " + str(rättasvar) + "/" + str(NQ) + " correct answers" )
 
 
